@@ -19,9 +19,7 @@ class CompanyController extends AbstractController
     public function index(Request $request): Response
     {
         $search = $request->query->get('search');
-        $companyData = $this->companyRepository->getAggregatedData($search);
         return $this->render('company/index.html.twig', [
-            'companies' => $companyData,
             'search' => $search,
         ]);
     }
@@ -32,18 +30,5 @@ class CompanyController extends AbstractController
         return $this->render('company/edit.html.twig', [
             'company' => $company,
         ]);
-    }
-
-    #[Route('/companies', name: 'app_company_submit', methods: ['POST'])]
-    public function  submit(Request $request){
-        // OWASP 3 - XSS Injection - unescaped at input
-        $id = $request->request->get('id');
-        $name = $request->request->get('name');
-        $company = $id ? $this->companyRepository->find($id) : new Company();
-        $company->setName($name);
-
-        $this->companyRepository->save($company, true);
-        return $this->redirectToRoute('app_companies');
-
     }
 }
