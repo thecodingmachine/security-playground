@@ -5,5 +5,29 @@
 {% block body %}
     <div class="example-wrapper">
         <h1>Companies</h1>
+        <h2>Search</h2>
+        <form action="{{ path('app_companies') }}" method="GET">
+            <div class="row align-items-center">
+                <div class="col flex-grow-0">
+                    <label for="search" class="col-form-label">Search</label>
+                </div>
+                <div class="col">
+                    <!-- FIXME: HACK : type "%';UPDATE user set email = 'test@evil.com' WHERE id=2 -- " to update user -->
+                    <input type="text" id="search" class="form-control" name="search" placeholder="type some text" value="{{ search }}">
+                </div>
+                <div class="col flex-grow-0">
+                    <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
+                </div>
+            </div>
+        </form>
+        <h2>List of companies</h2>
+        <ul>
+            {% for company in companies %}
+                <!-- OWASP 3 - XSS Injection : unescaped output -->
+                <!-- | raw is quite obvious -->
+                <!-- Maybe we should try to outpout with php instead of twig, or justify raw with WYSIWYG -->
+            <li><a href="{{ path('app_company_edit', {'id': company.id }) }}">{{ company.name | raw }} - {{ company.userNb }} users</a></li>
+            {% endfor %}
+        </ul>
     </div>
 {% endblock %}
