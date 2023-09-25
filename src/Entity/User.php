@@ -34,10 +34,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Company $company = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $card_number = null;
+    private ?string $cardNumber = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $card_cvv = null;
+    private ?string $cardCvv = null;
 
     public function getId(): ?int
     {
@@ -142,24 +142,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getCardNumber(): ?string
     {
-        return $this->card_number;
+        return $this->cardNumber;
     }
 
-    public function setCardNumber(?string $card_number): self
+    public function setCardNumber(?string $cardNumber): self
     {
-        $this->card_number = $card_number;
+        $this->cardNumber = $cardNumber;
 
         return $this;
     }
 
     public function getCardCvv(): ?string
     {
-        return $this->card_cvv;
+        return $this->cardCvv;
     }
 
-    public function setCardCvv(?string $card_cvv): self
+    public function setCvv(?string $cardCvv): self
     {
-        $this->card_cvv = $card_cvv;
+        $this->cardCvv = $cardCvv;
 
         return $this;
     }

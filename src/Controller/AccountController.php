@@ -38,6 +38,15 @@ class AccountController extends AbstractController
             throw new BadRequestHttpException('missing email');
         }
         $user->setEmail($email);
+
+        // Retrieve card numbers from the request
+        $cardNumber = $request->request->get('card_number');
+        $cardCvv = $request->request->get('card_cvv');
+
+        // Use MD5 to hash card data
+        $user->setCardNumber(md5($cardNumber));
+        $user->setCvv(md5($cardCvv));
+
         $this->userRepository->save($user, true);
 
         $this->addFlash('account','Account updated');
