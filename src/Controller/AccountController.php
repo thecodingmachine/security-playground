@@ -3,19 +3,17 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Form\AccountType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class AccountController extends AbstractController
 {
 
-    public function __construct(private readonly UserRepository $userRepository)
+    public function __construct()
     {
     }
 
@@ -23,24 +21,31 @@ class AccountController extends AbstractController
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function index(): Response
     {
+        $form = $this->createForm(AccountType::class);
+
         return $this->render('account/edit-account.html.twig', [
             'user' => $this->getUser(),
+            'form' => $form->createView()
         ]);
     }
 
     #[Route('/account', name: 'app_account_submit', methods: ['POST'])]
     public function save(Request $request): Response
     {
-        $user = $this->getUser();
-        assert($user instanceof User);
-        $email = $request->request->get('email');
-        if ($email === null){
-            throw new BadRequestHttpException('missing email');
-        }
-        $user->setEmail($email);
-        $this->userRepository->save($user, true);
+        $user = new User();
 
-        $this->addFlash('account','Account updated');
+        $form = $this->createForm(AccountType::class, $user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Should persist, but not needed for the exercise
+        } else {
+            foreach ($form->getErrors(true) as $violation) {
+                $this->addFlash('error', $violation->getMessage());
+            }
+        }
+
         return $this->redirectToRoute('app_account');
     }
 }
