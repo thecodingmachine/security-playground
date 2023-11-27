@@ -40,8 +40,8 @@ class AccountController extends AbstractController
         $user->setEmail($email);
 
         // Retrieve card numbers from the request
-        $cardNumber = $request->request->get('card_number');
-        $cardCvv = $request->request->get('card_cvv');
+        $cardNumber = $request->request->get('cardNumber');
+        $cardCvv = $request->request->get('carCvv');
 
         // Use MD5 to hash card data
         $user->setCardNumber(md5($cardNumber));
