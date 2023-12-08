@@ -24,7 +24,7 @@ services:
     image: thecodingmachine/php:8.1-v4-apache-node16
     labels:
       - traefik.enable=true
-      - traefik.http.routers.app_router.rule=Host(`$DOMAIN`)
+      - traefik.http.routers.app_router.rule=Host(`$DOMAIN`,`$DOMAINB`)
     environment:
       APACHE_DOCUMENT_ROOT: "public/"
       PHP_EXTENSION_XDEBUG: "1"
