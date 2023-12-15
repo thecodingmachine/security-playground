@@ -1,0 +1,70 @@
+stages:
+    - test
+    - build
+    - deploy
+
+test_web_staging:
+    image: thecodingmachine/php:8.1-v4-apache-node16
+    stage: test
+    services:
+        -   name: mysql:8.0
+            alias: mysql_tests
+    variables:
+        PHP_INI_MEMORY_LIMIT: "8G"
+        PHP_EXTENSIONS: "intl gd"
+        MYSQL_DATABASE: security_playground_test
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_USER: root
+    before_script:
+        - yarn
+    script:
+        - cp .env.dist .env
+        - composer install
+        - npm install
+
+build_production:
+    image: docker:git
+    stage: build
+    services:
+        - docker:dind
+    variables:
+        DOCKER_DRIVER: overlay2
+    before_script:
+        - cp .env.dist .env
+    script:
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        - docker build -t ${CI_REGISTRY}/tcm-projects/security-playground/web:$CI_COMMIT_REF_NAME .
+            --build-arg COMPOSER_AUTH="$COMPOSER_AUTH"
+        - docker push ${CI_REGISTRY}/tcm-projects/security-playground/web:$CI_COMMIT_REF_NAME
+    only:
+        - main
+
+deploy_production:
+    stage: deploy
+    image: kroniak/ssh-client:3.6
+    variables:
+        SSH_KEY: "${PRODUCTION_SSH_KEY}" # to get the right private key for the deployed environment
+    before_script:
+        - eval $(ssh-agent -s) # to init SSH agent
+        - echo "${SSH_KEY}" | tr -d '\r' | ssh-add - # to load the private key for the current user
+        - mkdir -p ~/.ssh && echo -e "Host *\n\tStrictHostKeyChecking no" >> ~/.ssh/config && chmod 600 ~/.ssh/config # to disable the strict host authenticity checks
+    script:
+        # Update the .env file on the server
+        - cp .env.production .env
+        - echo "DOMAIN=$PRODUCTION_DOMAIN" >> .env
+        - echo "MYSQL_ROOT_PASSWORD=$PRODUCTION_MYSQL_ROOT_PASSWORD" >> .env
+        - echo "MYSQL_DATABASE=$PRODUCTION_MYSQL_DATABASE" >> .env
+        - echo "MYSQL_USER=$PRODUCTION_MYSQL_USER" >> .env
+        - echo "MYSQL_PASSWORD=$PRODUCTION_MYSQL_PASSWORD" >> .env
+        - scp .env "$PRODUCTION_IP_ADDRESS":.
+        # Log into Docker registry
+        - ssh $PRODUCTION_IP_ADDRESS "docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY"
+        # Stop container, remove image.
+        - ssh $PRODUCTION_IP_ADDRESS "docker compose -f docker-compose.production.yaml down --rmi all" || true
+        # Start new container
+        - ssh $PRODUCTION_IP_ADDRESS "docker compose -f docker-compose.production.yaml up -d"
+        # Execute migration
+        - ssh $PRODUCTION_IP_ADDRESS "docker exec -i app bin/console do:mi:mi --no-interaction"
+    only:
+        - main
+    when: manual
