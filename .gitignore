@@ -11,3 +11,5 @@
 /vendor/
 /public/uploads
 ###< symfony/framework-bundle ###
+
+node_modules

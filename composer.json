@@ -1,5 +1,6 @@
 {
     "type": "project",
+    "name": "tcm-projects/security-playground",
     "license": "proprietary",
     "minimum-stability": "stable",
     "prefer-stable": true,
@@ -82,6 +83,7 @@
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "fzaninotto/faker": "*",
+        "icanhazstring/composer-unused": "^0.8.11",
         "symfony/maker-bundle": "^1.48",
         "symfony/stopwatch": "5.4.*",
         "symfony/web-profiler-bundle": "5.4.*"

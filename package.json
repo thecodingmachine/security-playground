@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "depcheck": "^1.4.7"
+  },
+  "dependencies": {
+    "jquery": "1.12",
+    "toastr": "^2.1.4"
+  }
+}
