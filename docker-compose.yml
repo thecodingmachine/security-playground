@@ -2,7 +2,6 @@
 version: '3.5'
 
 services:
-
   traefik:
     image: traefik:2.4
     command:
@@ -83,9 +82,7 @@ services:
       PMA_PASSWORD: "$MYSQL_ROOT_PASSWORD"
       UPLOAD_LIMIT: 300M
 
-
 volumes:
-
   mysql_data:
     driver: local
     

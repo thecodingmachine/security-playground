@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\UserRepository;
@@ -9,7 +11,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte avec cet email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -26,12 +28,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'last_name', type: 'string', length: 255, nullable: true)]
     private ?string $lastName = null;
 
+    #[ORM\Column(name: 'id_card', type: 'string', length: 255, nullable: true)]
+    private ?string $idCard = null;
+
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
     private ?string $password = null;
 
@@ -78,6 +80,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->lastName = $lastName;
 
         return $this;
+    }
+
+    public function getIdCard(): ?string
+    {
+        return $this->idCard;
+    }
+
+    public function setIdCard(?string $idCard): void
+    {
+        $this->idCard = $idCard;
     }
 
     /**

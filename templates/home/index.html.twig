@@ -1,9 +1,28 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Tableau de bord{% endblock %}
 
 {% block body %}
-<div class="example-wrapper">
-    <h1>Hello {{ app.user.email }}! ✅</h1>
-</div>
+    <div class="example-wrapper mt-5">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>Prénom</th>
+                    <td>{{ app.user.firstName }}</td>
+                </tr>
+
+                <tr>
+                    <th>Nom</th>
+                    <td>{{ app.user.lastName }}</td>
+                </tr>
+
+                <tr>
+                    <th>Email</th>
+                    <td>{{ app.user.email }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a class="btn btn-primary" href="{{ path('app_account_edit') }}">Modifier</a>
+    </div>
 {% endblock %}

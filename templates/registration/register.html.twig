@@ -1,17 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
 
 {% block body %}
-    <h1>Register</h1>
+    <div class="example-wrapper mt-5">
+        <h1>Inscription</h1>
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+        {{ form_start(form) }}
+            {{ form_row(form.firstName) }}
+            {{ form_row(form.lastName) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.plainPassword) }}
+            {{ form_row(form.agreeTerms) }}
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+            <button type="submit" class="btn btn-primary">S'inscrire</button>
+        {{ form_end(form) }}
+    </div>
 {% endblock %}

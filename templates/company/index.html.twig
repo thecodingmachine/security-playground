@@ -1,12 +1,51 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello CompanyController!{% endblock %}
+{% block title %}Ma société{% endblock %}
 
 {% block body %}
-    <div class="example-wrapper">
+    <div class="example-wrapper mt-5">
         <h1>{{ company.name }}</h1>
 
         <a class="btn btn-primary" href="{{ path('app_company_edit', {'id': company.id}) }}">Modifier</a>
-        <button  class="btn btn-dark">Afficher les utilisateurs inscrits</button>
+        <button  class="btn btn-dark" id="btn-show-company-users">Afficher les utilisateurs de la société</button>
+
+        <table class="table mt-4 d-none" id="list-users">
+            <thead>
+                <tr>
+                    <th>Prénom</th>
+                    <th>Nom</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js" integrity="sha512-b94Z6431JyXY14iSXwgzeZurHHRNkLt9d6bAHt7BZT38eqV+GyngIi/tVye4jBKPYQ2lBdRs0glww4fmpuLRwA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const showCompanyUsersBtn = document.querySelector('#btn-show-company-users');
+            const tableEl = document.querySelector('#list-users')
+
+            showCompanyUsersBtn.addEventListener('click', function () {
+                axios({
+                    method: 'GET',
+                    url: "{{ path('app_companies_about', {'id': company.id}) }}",
+                }).then(function (response) {
+                    let tbody = '';
+                    response.data.company.users.forEach(user => {
+                        tbody += "<tr><td>" + user.firstName + "</td><td>" + user.lastName + "</td></tr>"
+                    })
+
+                    tableEl.querySelector('tbody').innerHTML = tbody;
+
+                    tableEl.classList.remove('d-none');
+                }).catch(error => console.log(error));
+            })
+        });
+    </script>
 {% endblock %}

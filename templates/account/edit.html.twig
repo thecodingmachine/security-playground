@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+{% block title %}Modifier mon profil{% endblock %}
+
+{% block body %}
+    <div class="example-wrapper mt-5">
+        <h1>Modifier mon profil</h1>
+
+        {{ form_start(form) }}
+            {{ form_row(form.firstName) }}
+            {{ form_row(form.lastName) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.idCard) }}
+            {% if app.user.idCard is not null %}
+                <iframe src="{{ '/uploads/' ~ app.user.idCard }}" height="300px" class="d-block mb-4"></iframe>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary">Modifier</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

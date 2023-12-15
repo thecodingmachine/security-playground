@@ -2,13 +2,15 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}TCM - Security playground{% endblock %}</title>
+
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
         <script src="/js/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
         <script src="/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+
         <link rel="stylesheet" href="/css/bootstrap.min.css">
         <link rel="stylesheet" href="/css/b-icons/bootstrap-icons.css">
-        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
@@ -17,23 +19,33 @@
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
+
     <body>
+        {% for flashMessage in app.flashes('success') %}
+            <div class="alert alert-success m-3">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+
         {% if app.user %}
             <nav class="navbar navbar-expand-lg bg-light">
                 <div class="container-fluid">
                     <a class="navbar-brand" href="/">TCM - Security playground</a>
+
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
+
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="/">Mon compte</a>
+                                <a class="nav-link active" aria-current="page" href="/">Tableau de bord</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ path('app_companies') }}">Ma société</a>
                             </li>
                         </ul>
+
                         <div>
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item dropdown">
@@ -50,6 +62,7 @@
                 </div>
             </nav>
         {% endif %}
+
         <div class="container">
             {% block body %}{% endblock %}
         </div>
