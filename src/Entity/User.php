@@ -17,8 +17,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(name: 'email', type: 'string', length: 255, unique: true, nullable: true)]
     private ?string $email = null;
+
+    #[ORM\Column(name: 'first_name', type: 'string', length: 255, nullable: true)]
+    private ?string $firstName = null;
+
+    #[ORM\Column(name: 'last_name', type: 'string', length: 255, nullable: true)]
+    private ?string $lastName = null;
 
     #[ORM\Column]
     private array $roles = [];
@@ -50,6 +56,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(?string $firstName): self
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(?string $lastName): self
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
     /**
      * A visual identifier that represents this user.
      *
@@ -74,6 +104,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
+
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
@@ -83,6 +114,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function addRole(string $role): self
+    {
+        if (in_array($role, $this->roles, true)) {
+            return $this;
+        }
+
+        $this->roles[] = $role;
 
         return $this;
     }

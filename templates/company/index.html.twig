@@ -4,6 +4,9 @@
 
 {% block body %}
     <div class="example-wrapper">
-        <h1>Companies</h1>
+        <h1>{{ company.name }}</h1>
+
+        <a class="btn btn-primary" href="{{ path('app_company_edit', {'id': company.id}) }}">Modifier</a>
+        <button  class="btn btn-dark">Afficher les utilisateurs inscrits</button>
     </div>
 {% endblock %}

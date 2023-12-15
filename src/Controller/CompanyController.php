@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Company;
+use App\Entity\User;
 use App\Repository\CompanyRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,14 +19,17 @@ class CompanyController extends AbstractController
     #[Route('/companies', name: 'app_companies', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        $search = $request->query->get('search');
+        /** @var User $user */
+        $user = $this->getUser();
+
         return $this->render('company/index.html.twig', [
-            'search' => $search,
+            'company' => $user->getCompany(),
         ]);
     }
 
     #[Route('/companies/{id}', name: 'app_company_edit', methods: ['GET'])]
-    public function  edit(int $id){
+    public function  edit(int $id): Response
+    {
         $company = $this->companyRepository->find($id);
         return $this->render('company/edit.html.twig', [
             'company' => $company,
