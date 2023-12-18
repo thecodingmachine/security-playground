@@ -17,15 +17,28 @@ class AdminUserFixture extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        $admin = new User();
-        $admin->setEmail('admin@security-playground.localhost');
-        $admin->setPassword($this->passwordHasher->hashPassword(
-            $admin,
-            'secret'
-        ));
-        $admin->setCompany($this->getReference(CompanyFixtures::TCM_COMPANY_REFERENCE));
-        $manager->persist($admin);
-        $manager->flush();
+        $users = [
+            'admin@security-playground.localhost',
+            'axel@monsite.com',
+            'fadi@monsite.com',
+            'pierre@monsite.com',
+            'marie@monsite.com',
+            'sabrina@monsite.com',
+        ];
+
+        foreach ($users as $userEmail) {
+            $admin = new User();
+            $admin->setEmail($userEmail);
+            $admin->setPassword($this->passwordHasher->hashPassword(
+                $admin,
+                '9d8d!02ND892'
+            ));
+            $admin->setCompany($this->getReference(CompanyFixtures::TCM_COMPANY_REFERENCE));
+            $manager->persist($admin);
+            $manager->flush();
+        }
+
+
     }
 
     public function getDependencies()
