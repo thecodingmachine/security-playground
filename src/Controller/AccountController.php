@@ -43,9 +43,8 @@ class AccountController extends AbstractController
         $cardNumber = $request->request->get('cardNumber');
         $cardCvv = $request->request->get('carCvv');
 
-        // Use MD5 to hash card data
-        $user->setCardNumber(md5($cardNumber));
-        $user->setCvv(md5($cardCvv));
+        $user->setCardNumber($cardNumber);
+        $user->setCvv($cardCvv);
 
         $this->userRepository->save($user, true);
 
