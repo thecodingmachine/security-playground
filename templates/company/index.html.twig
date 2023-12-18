@@ -23,9 +23,6 @@
         <h2>List of companies</h2>
         <ul>
             {% for company in companies %}
-                <!-- OWASP 3 - XSS Injection : unescaped output -->
-                <!-- | raw is quite obvious -->
-                <!-- Maybe we should try to outpout with php instead of twig, or justify raw with WYSIWYG -->
             <li><a href="{{ path('app_company_edit', {'id': company.id }) }}">{{ company.name | raw }} - {{ company.userNb }} users</a></li>
             {% endfor %}
         </ul>
