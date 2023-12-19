@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+{% block title %}Photo de profil{% endblock %}
+
+{% block body %}
+    <div class="example-wrapper mt-5">
+        <h1>Modifier ma photo de profil</h1>
+
+        {{ form_start(form) }}
+            {{ form_row(form.profilePicture) }}
+
+            {% if profilePictureBase64 is not null %}
+                <img src="{{ 'data:image/png;base64,' ~ profilePictureBase64 }}" height="300px" class="mb-3" />
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary d-block">Modifier</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

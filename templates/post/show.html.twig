@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ data.title }}{% endblock %}
+
+{% block body %}
+    <div class="example-wrapper mt-5">
+        <h3>{{ data.title | capitalize }}</h3>
+        <div class="card-body">{{ data.body | raw }}</div>
+    </div>
+{% endblock %}

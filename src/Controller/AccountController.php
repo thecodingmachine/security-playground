@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UpdateAccountFormType;
+use App\Form\UpdateProfilePictureFormType;
 use App\Repository\UserRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -50,6 +51,33 @@ class AccountController extends AbstractController
 
         return $this->render('account/edit.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/account/profile-picture/edit', name: 'app_account_update_profile_picture', methods: ['GET', 'POST'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function updateProfilePicture(Request $request): Response
+    {
+        $user = $this->getUser();
+        assert($user instanceof User);
+
+        $form = $this->createForm(UpdateProfilePictureFormType::class, $user);
+
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $profilePictureUrl = $form->get('profilePicture')->getData();
+
+            $profilePictureBase64 = base64_encode(file_get_contents($profilePictureUrl));
+            $user->setProfilePictureBase64($profilePictureBase64);
+
+            $this->userRepository->save($user, true);
+
+            $this->addFlash('success', "Votre photo de profil a bien été modifié");
+        }
+
+        return $this->render('account/edit_profile_picture.html.twig', [
+            'form' => $form->createView(),
+            'profilePictureBase64' => $user->getProfilePictureBase64(),
         ]);
     }
 }

@@ -13,7 +13,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CompanyController extends AbstractController
@@ -33,7 +32,7 @@ class CompanyController extends AbstractController
         ]);
     }
 
-    #[Route('/companies/{id}/about/ajax', name: 'app_companies_about', methods: ['GET'])]
+    #[Route('/companies/{id}/about/ajax', name: 'app_company_about', methods: ['GET'])]
     public function about(int $id): JsonResponse
     {
         $company = $this->companyRepository->find($id);

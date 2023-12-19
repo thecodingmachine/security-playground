@@ -31,6 +31,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'id_card', type: 'string', length: 255, nullable: true)]
     private ?string $idCard = null;
 
+    #[ORM\Column(name: 'profile_picture_base64', type: 'text', nullable: true)]
+    private ?string $profilePictureBase64 = null;
+
     #[ORM\Column]
     private array $roles = [];
 
@@ -90,6 +93,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIdCard(?string $idCard): void
     {
         $this->idCard = $idCard;
+    }
+
+    public function getProfilePictureBase64(): ?string
+    {
+        return $this->profilePictureBase64;
+    }
+
+    public function setProfilePictureBase64(?string $profilePictureBase64): self
+    {
+        $this->profilePictureBase64 = $profilePictureBase64;
+
+        return $this;
     }
 
     /**

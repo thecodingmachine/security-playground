@@ -34,7 +34,7 @@
             showCompanyUsersBtn.addEventListener('click', function () {
                 axios({
                     method: 'GET',
-                    url: "{{ path('app_companies_about', {'id': company.id}) }}",
+                    url: "{{ path('app_company_about', {'id': company.id}) }}",
                 }).then(function (response) {
                     let tbody = '';
                     response.data.company.users.forEach(user => {
