@@ -34,9 +34,9 @@ class VipController extends AbstractController
         return $this->render('account/become_vip.html.twig');
     }
 
-    #[Route('/account/pay-vip', name: 'app_account_pay_vip', methods: ['POST'])]
+    #[Route('/account/stripe/payment/checkout', name: 'app_account_stripe_payment_checkout', methods: ['POST'])]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    public function payVip(Request $request): JsonResponse
+    public function startPayment(Request $request): JsonResponse
     {
         $content = json_decode($request->getContent(), true);
         $amount = $content['amount'] ?? 0;
@@ -50,5 +50,31 @@ class VipController extends AbstractController
         }
 
         return new JsonResponse(['success' => true, 'url' => $this->stripeService->createSession($amount)]);
+    }
+
+    #[Route('/account/stripe/payment/success', name: 'app_account_stripe_payment_success', methods: ['GET'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function successPayment(): Response
+    {
+        $user = $this->getUser();
+        assert($user instanceof User);
+
+        $user->addRole('ROLE_VIP');
+
+        $this->addFlash('success', "Merci pour votre paiement");
+
+        return $this->render('home/index.html.twig');
+    }
+
+    #[Route('/account/stripe/payment/cancel', name: 'app_account_stripe_payment_cancel', methods: ['GET'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function cancelPayment(): Response
+    {
+        $user = $this->getUser();
+        assert($user instanceof User);
+
+        $this->addFlash('error', "Le paiement a été annulé");
+
+        return $this->render('account/become_vip.html.twig');
     }
 }

@@ -94,7 +94,7 @@
                 payBtn.setAttribute('disabled', 'disabled');
 
                 axios
-                    .post("{{ path('app_account_pay_vip') }}", { amount })
+                    .post("{{ path('app_account_stripe_payment_checkout') }}", { amount })
                     .then(function (response) {
                         if (! response.data.success) {
                             toastr.error(response.data.message);
