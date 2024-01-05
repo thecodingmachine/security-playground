@@ -98,13 +98,12 @@
                     .then(function (response) {
                         if (! response.data.success) {
                             toastr.error(response.data.message);
+                            payBtn.removeAttribute('disabled');
                         } else {
-                            toastr.success(response.data.message);
+                            window.location.replace(response.data.url);
                         }
-
-                        payBtn.removeAttribute('disabled');
                     })
-                    .catch(error => {
+                    .catch(() => {
                         toastr.error("Une erreur est survenue , veuillez réessayer ultérieurement");
                         payBtn.removeAttribute('disabled');
                     });

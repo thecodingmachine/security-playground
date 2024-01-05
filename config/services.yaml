@@ -19,6 +19,15 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/Service/'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    App\Service\StripeServiceInterface:
+        alias: app.service.stripe
+
+    app.service.stripe:
+        class: App\Service\StripeService
+        arguments:
+            $secretKey: '%env(STRIPE_SECRET_KEY)%'
+            $domain: '%env(DOMAIN)%'
