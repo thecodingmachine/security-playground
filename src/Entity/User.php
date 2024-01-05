@@ -202,4 +202,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function isVIP(): bool
+    {
+        return in_array('ROLE_VIP', $this->getRoles(), true);
+    }
 }

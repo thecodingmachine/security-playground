@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Devenir VIP{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+{% endblock %}
+
+{% block body %}
+    <div class="example-wrapper mt-5">
+        <h1>Devenir VIP</h1>
+
+        <div class="alert alert-info">Utilisez le coupon <strong>VIP10</strong> pour bénéficier de 10% de réduction</div>
+
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Avez-vous un coupon ?" aria-label="Coupon" aria-describedby="coupon" id="coupon">
+            <button class="btn btn-outline-secondary" type="button" id="btn-coupon">Utiliser</button>
+            <div class="invalid-feedback">Code invalide.</div>
+        </div>
+
+        <div id="coupon-applied" class="d-none">
+            <span class="badge bg-success">Coupon appliqué : <strong></strong></span>
+        </div>
+
+        <button type="button" class="btn btn-primary mt-3" id="btn-pay">Payer 100€</button>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.4/axios.min.js" integrity="sha512-ANd7ZJmixP2T0hxOP4bS6hkci01fxyrQSyRdaY7IsWq1WlKsD0WwWBDVDZbnMR7CJZVKCTkDx/q5D5n2C2C+vg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const couponBtn = document.querySelector('#btn-coupon');
+            const couponField = document.querySelector('#coupon');
+            const couponAppliedEl = document.querySelector('#coupon-applied');
+            const payBtn = document.querySelector('#btn-pay');
+
+            let amount = 100;
+            let initialAmount = 100;
+
+            const showFormError = () => {
+                couponField.classList.add('is-invalid');
+                couponAppliedEl.classList.add('d-none');
+                payBtn.innerHTML = "Payer " + initialAmount + "€";
+            }
+
+            const applyDiscount = (discount) => {
+                amount = initialAmount - initialAmount * discount/100;
+
+                couponAppliedEl.classList.remove('d-none');
+                couponField.classList.remove('is-invalid');
+                couponAppliedEl.querySelector('span > strong').innerText = couponField.value;
+                payBtn.innerHTML = "Payer <strike>" + initialAmount + "€</strike> <strong>" + amount + "€<strong>";
+            }
+
+            couponBtn.addEventListener('click', function () {
+                if (couponField.value === '') {
+                    couponField.classList.remove('is-invalid');
+                    couponAppliedEl.classList.add('d-none');
+                    payBtn.innerHTML = "Payer " + initialAmount + "€";
+
+                    return;
+                }
+
+                if (! couponField.value.startsWith('VIP')) {
+                    showFormError();
+                    return;
+                }
+
+                const discount = parseInt(couponField.value.replace('VIP', ''));
+
+                if (! Number.isInteger(discount)) {
+                    showFormError();
+                    return;
+                }
+
+                if (discount < 0 || discount > 50) {
+                    showFormError();
+                    return;
+                }
+
+                applyDiscount(discount);
+            })
+
+            payBtn.addEventListener('click', function () {
+                payBtn.setAttribute('disabled', 'disabled');
+
+                axios
+                    .post("{{ path('app_account_pay_vip') }}", { amount })
+                    .then(function (response) {
+                        if (! response.data.success) {
+                            toastr.error(response.data.message);
+                        } else {
+                            toastr.success(response.data.message);
+                        }
+
+                        payBtn.removeAttribute('disabled');
+                    })
+                    .catch(error => {
+                        toastr.error("Une erreur est survenue , veuillez réessayer ultérieurement");
+                        payBtn.removeAttribute('disabled');
+                    });
+            })
+        });
+    </script>
+{% endblock %}
