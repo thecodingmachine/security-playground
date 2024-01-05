@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use App\Service\StripeServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Stripe\Exception\ApiErrorException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +18,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class VipController extends AbstractController
 {
-    public function __construct(private readonly StripeServiceInterface $stripeService)
+    public function __construct(private readonly UserRepository $userRepository, private readonly StripeServiceInterface $stripeService)
     {
     }
 
@@ -38,6 +40,9 @@ class VipController extends AbstractController
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function startPayment(Request $request): JsonResponse
     {
+        $user = $this->getUser();
+        assert($user instanceof User);
+
         $content = json_decode($request->getContent(), true);
         $amount = $content['amount'] ?? 0;
 
@@ -49,7 +54,13 @@ class VipController extends AbstractController
             return new JsonResponse(['success' => false, 'message' => "Le montant ne peut pas être inférieur à 0"]);
         }
 
-        return new JsonResponse(['success' => true, 'url' => $this->stripeService->createSession($amount)]);
+        $session = $this->stripeService->createSession($amount);
+
+        $user->setSessionStripeId($session->id);
+
+        $this->userRepository->save($user, true);
+
+        return new JsonResponse(['success' => true, 'url' => $session->url]);
     }
 
     #[Route('/account/stripe/payment/success', name: 'app_account_stripe_payment_success', methods: ['GET'])]
@@ -59,7 +70,23 @@ class VipController extends AbstractController
         $user = $this->getUser();
         assert($user instanceof User);
 
+        if ($user->getSessionStripeId() === null) {
+            throw new AccessDeniedException();
+        }
+
+        try {
+            $session = $this->stripeService->findSessionById($user->getSessionStripeId());
+        } catch (ApiErrorException) {
+            throw new AccessDeniedException();
+        }
+
+        if ($session->payment_status !== 'paid') {
+            throw new AccessDeniedException();
+        }
+
         $user->addRole('ROLE_VIP');
+
+        $this->userRepository->save($user, true);
 
         $this->addFlash('success', "Merci pour votre paiement");
 

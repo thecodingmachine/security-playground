@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Service;
 
 use Stripe\Checkout\Session;
+use Stripe\Exception\ApiErrorException;
 use Stripe\Stripe;
+use Stripe\StripeClient;
 use Symfony\Component\Routing\RouterInterface;
 
 final class StripeService implements StripeServiceInterface
@@ -14,11 +16,11 @@ final class StripeService implements StripeServiceInterface
     {
     }
 
-    public function createSession(int $amount): string
+    public function createSession(int $amount): Session
     {
         Stripe::setApiKey($this->secretKey);
 
-        $session = Session::create([
+        return Session::create([
             'line_items' => [
                 [
                     'quantity' => 1,
@@ -35,7 +37,15 @@ final class StripeService implements StripeServiceInterface
             'success_url' => $this->router->generate('app_account_stripe_payment_success', [], RouterInterface::ABSOLUTE_URL),
             'cancel_url' => $this->router->generate('app_account_stripe_payment_cancel', [], RouterInterface::ABSOLUTE_URL),
         ]);
+    }
 
-        return $session->url;
+    /**
+     * @throws ApiErrorException
+     */
+    public function findSessionById(string $id): Session
+    {
+        $stripe = new StripeClient($this->secretKey);
+
+        return $stripe->checkout->sessions->retrieve($id);
     }
 }

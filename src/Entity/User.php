@@ -40,6 +40,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    #[ORM\Column]
+    private ?string $sessionStripeId = null;
+
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Company $company = null;
@@ -167,6 +170,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getSessionStripeId(): ?string
+    {
+        return $this->sessionStripeId;
+    }
+
+    public function setSessionStripeId(?string $sessionStripeId): self
+    {
+        $this->sessionStripeId = $sessionStripeId;
 
         return $this;
     }
