@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Let's see the md5 of each images!{% endblock %}
+
+{% block body %}
+    {% for image in images %}
+        <img src="{{ image['url'] }}" width="500"><br><br>
+    {% endfor %}
+{% endblock %}

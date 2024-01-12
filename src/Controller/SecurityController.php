@@ -24,6 +24,31 @@ class SecurityController extends AbstractController
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 
+    #[Route(path: '/md5', name: 'app_md5')]
+    public function md5test(): Response
+    {
+        $carImg = 'images/car.jpg';
+        $planeImg = 'images/plane.jpg';
+        $shipImg = 'images/ship.jpg';
+
+        $images = [
+            'plane' => [
+                'url' => $planeImg,
+                'md5' => md5_file($planeImg),
+            ],
+            'car' => [
+                'url' => $carImg,
+                'md5' => md5_file($carImg),
+            ],
+            'ship' => [
+                'url' => $shipImg,
+                'md5' => md5_file($shipImg),
+            ],
+        ];
+
+        return $this->render('security/md5.html.twig', ['images' => $images]);
+    }
+
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
