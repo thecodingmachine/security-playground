@@ -18,8 +18,7 @@ class ResetAppCommand extends Command
     {
         // Install dependencies
         $composerInstall = new Process(['composer', 'install', '-n']);
-        $composerInstall->mustRun();
-
+        $composerInstall->run();
         if (!$composerInstall->isSuccessful()) {
             echo $composerInstall->getOutput();
             return Command::FAILURE;
