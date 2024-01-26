@@ -40,7 +40,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'session_stripe_id', type: 'string', length: 255, nullable: true)]
     private ?string $sessionStripeId = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]

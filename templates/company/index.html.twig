@@ -37,9 +37,7 @@
                     url: "{{ path('app_company_about', {'id': company.id}) }}",
                 }).then(function (response) {
                     let tbody = '';
-                    response.data.company.users.forEach(user => {
-                        tbody += "<tr><td>" + user.firstName + "</td><td>" + user.lastName + "</td></tr>"
-                    })
+                    response.data.company.users.forEach(user => tbody += "<tr><td>" + user.firstName + "</td><td>" + user.lastName + "</td></tr>");
 
                     tableEl.querySelector('tbody').innerHTML = tbody;
 

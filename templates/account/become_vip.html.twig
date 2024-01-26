@@ -12,13 +12,16 @@
     <div class="example-wrapper mt-5">
         <h1>Devenir VIP</h1>
 
-        <div class="alert alert-info">Utilisez le coupon <strong>VIP10</strong> pour bénéficier de 10% de réduction</div>
+        {% if coupon is not null %}
+            <div class="alert alert-info">Utilisez le coupon <strong>VIP10</strong> pour bénéficier de {{ coupon.percent }}% de réduction</div>
 
-        <div class="input-group">
-            <input type="text" class="form-control" placeholder="Avez-vous un coupon ?" aria-label="Coupon" aria-describedby="coupon" id="coupon">
-            <button class="btn btn-outline-secondary" type="button" id="btn-coupon">Utiliser</button>
-            <div class="invalid-feedback">Code invalide.</div>
-        </div>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Avez-vous un coupon ?" aria-label="Coupon" aria-describedby="coupon" id="coupon">
+                <input id="discount" type="hidden" value="0">
+                <button class="btn btn-outline-secondary" type="button" id="btn-coupon">Utiliser</button>
+                <div class="invalid-feedback" id="coupon-error-message"></div>
+            </div>
+        {% endif %}
 
         <div id="coupon-applied" class="d-none">
             <span class="badge bg-success">Coupon appliqué : <strong></strong></span>
@@ -40,21 +43,26 @@
         document.addEventListener("DOMContentLoaded", () => {
             const couponBtn = document.querySelector('#btn-coupon');
             const couponField = document.querySelector('#coupon');
+            const couponErrorMessageEl = document.querySelector('#coupon-error-message');
+            const discountField = document.querySelector('#discount');
             const couponAppliedEl = document.querySelector('#coupon-applied');
             const payBtn = document.querySelector('#btn-pay');
 
             let amount = 100;
             let initialAmount = 100;
 
-            const showFormError = () => {
+            const showCouponError = (error) => {
+                discountField.value = 0;
+                couponErrorMessageEl.innerHTML = error;
                 couponField.classList.add('is-invalid');
                 couponAppliedEl.classList.add('d-none');
                 payBtn.innerHTML = "Payer " + initialAmount + "€";
             }
 
-            const applyDiscount = (discount) => {
-                amount = initialAmount - initialAmount * discount/100;
+            const applyDiscount = (percent) => {
+                amount = initialAmount - initialAmount * percent/100;
 
+                discountField.value = percent;
                 couponAppliedEl.classList.remove('d-none');
                 couponField.classList.remove('is-invalid');
                 couponAppliedEl.querySelector('span > strong').innerText = couponField.value;
@@ -63,6 +71,7 @@
 
             couponBtn.addEventListener('click', function () {
                 if (couponField.value === '') {
+                    discountField.value = 0;
                     couponField.classList.remove('is-invalid');
                     couponAppliedEl.classList.add('d-none');
                     payBtn.innerHTML = "Payer " + initialAmount + "€";
@@ -70,31 +79,28 @@
                     return;
                 }
 
-                if (! couponField.value.startsWith('VIP')) {
-                    showFormError();
-                    return;
-                }
+                axios
+                    .post("{{ path('app_coupons_verify') }}", {'code': couponField.value})
+                    .then(function (response) {
+                        if (response.data.success) {
+                            const percent = response.data.percent;
 
-                const discount = parseInt(couponField.value.replace('VIP', ''));
-
-                if (! Number.isInteger(discount)) {
-                    showFormError();
-                    return;
-                }
-
-                if (discount < 0 || discount > 50) {
-                    showFormError();
-                    return;
-                }
-
-                applyDiscount(discount);
+                            applyDiscount(percent);
+                        } else {
+                            showCouponError(response.data.message);
+                        }
+                    })
+                    .catch(() => {
+                        toastr.error("Une erreur est survenue , veuillez réessayer ultérieurement");
+                        payBtn.removeAttribute('disabled');
+                    });
             })
 
             payBtn.addEventListener('click', function () {
                 payBtn.setAttribute('disabled', 'disabled');
 
                 axios
-                    .post("{{ path('app_account_stripe_payment_checkout') }}", { amount })
+                    .post("{{ path('app_account_stripe_payment_checkout') }}", { 'discount': discountField.value })
                     .then(function (response) {
                         if (! response.data.success) {
                             toastr.error(response.data.message);

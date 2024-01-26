@@ -44,7 +44,8 @@ class AdminUserFixture extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            CompanyFixtures::class
+            CompanyFixture::class,
+            CouponFixture::class,
         ];
     }
 }

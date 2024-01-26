@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\CouponRepository;
 use App\Repository\UserRepository;
 use App\Service\StripeServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -18,7 +19,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class VipController extends AbstractController
 {
-    public function __construct(private readonly UserRepository $userRepository, private readonly StripeServiceInterface $stripeService)
+    public function __construct(private readonly UserRepository $userRepository, private readonly CouponRepository $couponRepository,private readonly StripeServiceInterface $stripeService)
     {
     }
 
@@ -33,7 +34,9 @@ class VipController extends AbstractController
             throw new AccessDeniedException();
         }
 
-        return $this->render('account/become_vip.html.twig');
+        $coupon = $this->couponRepository->findOneBy(['code' => 'VIP10']);
+
+        return $this->render('account/become_vip.html.twig', ['coupon' => $coupon]);
     }
 
     #[Route('/account/stripe/payment/checkout', name: 'app_account_stripe_payment_checkout', methods: ['POST'])]
@@ -44,13 +47,16 @@ class VipController extends AbstractController
         assert($user instanceof User);
 
         $content = json_decode($request->getContent(), true);
-        $amount = $content['amount'] ?? 0;
+        $amount = 100;
+        $discount = $content['discount'] ?? 0;
 
-        if (! is_numeric($amount)) {
+        if (! is_numeric($discount)) {
             return new JsonResponse(['success' => false, 'message' => "Le montant est invalide"]);
         }
 
-        if ($amount < 0) {
+        $amount = $amount - $amount * $discount / 100;
+
+        if ($amount <= 0) {
             return new JsonResponse(['success' => false, 'message' => "Le montant ne peut pas être inférieur à 0"]);
         }
 
