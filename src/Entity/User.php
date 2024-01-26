@@ -33,12 +33,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(nullable: false)]
     private ?Company $company = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $cardNumber = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $cardCvv = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -136,30 +130,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCompany(?Company $company): self
     {
         $this->company = $company;
-
-        return $this;
-    }
-
-    public function getCardNumber(): ?string
-    {
-        return $this->cardNumber;
-    }
-
-    public function setCardNumber(?string $cardNumber): self
-    {
-        $this->cardNumber = $cardNumber;
-
-        return $this;
-    }
-
-    public function getCardCvv(): ?string
-    {
-        return $this->cardCvv;
-    }
-
-    public function setCvv(?string $cardCvv): self
-    {
-        $this->cardCvv = $cardCvv;
 
         return $this;
     }

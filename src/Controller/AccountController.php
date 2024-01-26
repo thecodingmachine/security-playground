@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class AccountController extends AbstractController
 {
@@ -39,12 +38,9 @@ class AccountController extends AbstractController
         }
         $user->setEmail($email);
 
-        // Retrieve card numbers from the request
-        $cardNumber = $request->request->get('cardNumber');
-        $cardCvv = $request->request->get('carCvv');
-
-        $user->setCardNumber($cardNumber);
-        $user->setCvv($cardCvv);
+        // Retrieve password from the request
+        $password = $request->request->get('password');
+        $user->setPassword($password);
 
         $this->userRepository->save($user, true);
 
