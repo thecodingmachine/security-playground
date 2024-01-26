@@ -46,8 +46,6 @@ class CompanyRepository extends ServiceEntityRepository
      */
     public function getAggregatedData(?string $search) : array
     {
-        // OWASP-3 : SQL Injection
-        // Even better use an order by inside Doctrine
         $filters = [];
         if ($search){
             $filters[] = "AND company.name like '%$search%'";

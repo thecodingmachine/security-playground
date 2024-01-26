@@ -35,8 +35,7 @@ class CompanyController extends AbstractController
     }
 
     #[Route('/companies', name: 'app_company_submit', methods: ['POST'])]
-    public function  submit(Request $request){
-        // OWASP 3 - XSS Injection - unescaped at input
+    public function submit(Request $request){
         $id = $request->request->get('id');
         $name = $request->request->get('name');
         $company = $id ? $this->companyRepository->find($id) : new Company();
