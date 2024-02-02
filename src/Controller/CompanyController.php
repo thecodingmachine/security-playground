@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Company;
 use App\Entity\User;
 use App\Exception\CompanyNotFoundException;
 use App\Form\CompanyFormType;
@@ -65,5 +66,30 @@ class CompanyController extends AbstractController
         return $this->render('company/edit.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    // TODO merge with above
+
+    #[Route('/companies_old', name: 'app_companies', methods: ['GET'])]
+    public function search(Request $request): Response
+    {
+        $search = $request->query->get('search');
+        $companyData = $this->companyRepository->getAggregatedData($search);
+        return $this->render('company/index.html.twig', [
+            'companies' => $companyData,
+            'search' => $search,
+        ]);
+    }
+
+    #[Route('/companies_old', name: 'app_company_submit', methods: ['POST'])]
+    public function submit(Request $request){
+        $id = $request->request->get('id');
+        $name = $request->request->get('name');
+        $company = $id ? $this->companyRepository->find($id) : new Company();
+        $company->setName($name);
+
+        $this->companyRepository->save($company, true);
+        return $this->redirectToRoute('app_companies');
+
     }
 }

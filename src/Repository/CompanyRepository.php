@@ -40,4 +40,24 @@ class CompanyRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    /**
+     * @param string|null $search
+     * @return array{'id':int, 'name':string, 'userNb':int}
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function getAggregatedData(?string $search) : array
+    {
+        $filters = [];
+        if ($search){
+            $filters[] = "AND company.name like '%$search%'";
+        }
+        $sql = "SELECT 
+                company.id as id, company.name as name, count(user.id) as userNb
+            FROM company 
+                LEFT JOIN user ON user.company_id = company.id
+            WHERE TRUE %s GROUP BY company.id, company.name";
+
+        return $this->getEntityManager()->getConnection()->executeQuery(sprintf($sql, implode(" AND ", $filters)))->fetchAllAssociative();
+    }
 }
