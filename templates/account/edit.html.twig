@@ -12,6 +12,7 @@
             {{ form_row(form.firstName) }}
             {{ form_row(form.lastName) }}
             {{ form_row(form.email) }}
+            {{ form_row(form.password) }}
             {{ form_row(form.idCard) }}
             {% if app.user.idCard is not null %}
                 <iframe src="{{ '/uploads/' ~ app.user.idCard }}" height="300px" class="d-block mb-4"></iframe>
