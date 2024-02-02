@@ -68,20 +68,27 @@ class CompanyController extends AbstractController
         ]);
     }
 
-    // TODO merge with above
-
-    #[Route('/companies_old', name: 'app_companies', methods: ['GET'])]
+    #[Route('/companies-old', name: 'app_companies_old', methods: ['GET'])]
     public function search(Request $request): Response
     {
         $search = $request->query->get('search');
         $companyData = $this->companyRepository->getAggregatedData($search);
-        return $this->render('company/index.html.twig', [
+
+        return $this->render('company-old/index.html.twig', [
             'companies' => $companyData,
             'search' => $search,
         ]);
     }
 
-    #[Route('/companies_old', name: 'app_company_submit', methods: ['POST'])]
+    #[Route('/companies-old/{id}', name: 'app_company_edit_old', methods: ['GET'])]
+    public function editOld(int $id) {
+        $company = $this->companyRepository->find($id);
+        return $this->render('company-old/edit.html.twig', [
+            'company' => $company,
+        ]);
+    }
+
+    #[Route('/companies-old', name: 'app_company_submit_old', methods: ['POST'])]
     public function submit(Request $request){
         $id = $request->request->get('id');
         $name = $request->request->get('name');
@@ -89,7 +96,7 @@ class CompanyController extends AbstractController
         $company->setName($name);
 
         $this->companyRepository->save($company, true);
-        return $this->redirectToRoute('app_companies');
+        return $this->redirectToRoute('app_companies_old');
 
     }
 }

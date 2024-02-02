@@ -80,4 +80,21 @@ class AccountController extends AbstractController
             'profilePictureBase64' => $user->getProfilePictureBase64(),
         ]);
     }
+
+    #[Route('/account-old', name: 'app_account_submit_old', methods: ['POST'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function save(Request $request): Response
+    {
+        $user = $this->getUser();
+        assert($user instanceof User);
+        $email = $request->request->get('email');
+        if ($email === null){
+            throw new BadRequestHttpException('missing email');
+        }
+        $user->setEmail($email);
+        $this->userRepository->save($user, true);
+
+        $this->addFlash('account','Account updated');
+        return $this->redirectToRoute('app_account_edit');
+    }
 }
