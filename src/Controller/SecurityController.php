@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
@@ -21,6 +22,19 @@ class SecurityController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+    }
+    #[Route(path: '/malicious', name: 'app_malicious')]
+    public function malicious(Request $request): Response
+    {
+        return $this->render('security/malicious-home.html.twig');
+    }
+
+    #[Route(path: '/malicious-show', name: 'app_malicious_show')]
+    public function maliciousShow(Request $request): Response
+    {
+        $credentials = json_decode($request->get('credentials'));
+
+        return $this->render('security/malicious-show.html.twig', ['username' => $credentials->username, 'password' => $credentials->password]);
     }
 
     #[Route(path: '/md5', name: 'app_md5')]
