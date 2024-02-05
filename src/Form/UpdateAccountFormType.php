@@ -51,7 +51,7 @@ class UpdateAccountFormType extends AbstractType
             ])
             ->add('password', PasswordType::class, [
                 'label' => 'Password',
-                'required' => true,
+                'required' => false,
             ])
             ->add('idCard', FileType::class, [
                 'label' => "Carte d'identité (PDF)",
