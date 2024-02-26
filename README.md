@@ -36,6 +36,12 @@ Install dependencies :
 composer install
 ```
 
+Install front dependencies :
+
+```bash
+npm install
+```
+
 Run migrations :
 
 ```bash
