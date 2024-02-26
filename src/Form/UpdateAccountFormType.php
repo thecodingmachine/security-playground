@@ -56,7 +56,7 @@ class UpdateAccountFormType extends AbstractType
                 'required' => false,
                 'constraints' => array(
                     new Length(['max' => 8, 'maxMessage' => 'The password must not contain more than 8 characters']),
-                    new Regex('/^[a-zA-Z0-9]/', 'Password should only container letters & numbers.')
+                    new Regex('/^[a-zA-Z0-9]/', 'Password should only contain letters & numbers.')
                 ),
                 'first_options'  => ['label' => 'Password'],
                 'second_options' => ['label' => 'Password Confirmation'],
