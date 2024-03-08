@@ -27,7 +27,7 @@ class PostController extends AbstractController
 
         $response = $httpClient->request(strtoupper($method), $url);
 
-        $this->logger->info("[METHOD $method] $url : Response " . $response->getStatusCode());
+        $this->logger->alert(strtoupper($method) .  ' ' . $url . ' ' . $response->getStatusCode());
 
         $content = json_decode($response->getContent());
 
